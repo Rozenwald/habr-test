@@ -1,0 +1,42 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  margin: 0px;
+  background-color: #e3e3e3;
+}
+#app {
+  width: 100%;
+  height: 100%;
+  color: #464646;
+  text-align: center;
+}
+html {
+  width: 100%;
+  min-height: 100%;
+  background: #eee;
+  font-size: 16px;
+  line-height: 1.3;
+  font-family: PT Sans, sans-serif;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
+}
+.page-size {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.main {
+  max-width: 600px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
