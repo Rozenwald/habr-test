@@ -18,8 +18,6 @@ export async function getSuggest(search = '', startSearchFrom = 0): Promise<ISug
 				throw answer
 			})
 			.catch(e => {
-				console.log(e)
-				console.log(e.name)
 				if (e.name) abortErrorHandler()
 				else errorHandler(e)
 				return []

@@ -8,9 +8,25 @@
 			{{ label }}
 		</label>
 		<div class="autocomplete__search">
+			<div v-if="picked.length !== 0" class="autocomplete__wrapper">
+				<div
+					v-for="item in picked"
+					class="picked-suggest"
+				>
+					<span class="picked-suggest__val">
+						@{{	item.alias }}
+					</span>
+					<div
+						class="picked-suggest__icon"
+						@click="clearPicked(item)"
+					>
+						X
+					</div>
+				</div>
+			</div>
 			<input
 				v-model="search"
-				v-show="!picked"
+				v-show="picked.length === 1 || multiChoose"
 				id="search"
 				:placeholder="placeholder"
 				alt="Поле поиска пользователей и компаний"
@@ -19,17 +35,6 @@
 				@keydown.up.down="preselectSuggest($event)"
 				@keydown.enter="choose(dataList[preselect])"
 			>
-			<div v-if="picked" class="picked-suggest">
-				<span class="picked-suggest__val">
-					@{{	picked.alias }}
-				</span>
-				<div
-					class="picked-suggest__icon"
-					@click="clearPicked"
-				>
-					x
-				</div>
-			</div>
 		</div>
 		<suggest
 			v-if="!hasSlot"
@@ -37,8 +42,7 @@
 			:data="dataList"
 			:preselect="preselect"
 			@choose="choose"
-		>
-		</suggest>
+		/>
 		<slot v-else name="alternative">
 		</slot>
 	</article>
@@ -55,10 +59,10 @@ import { IAutocomplete, ISuggest } from '~/types/models.ts'
 // Переменные
 const search = defineModel<string>()
 const dataList = reactive<ISuggest[]>([])
-const picked = ref<ISuggest | null>(null)
+const picked = ref<ISuggest[]>([])
 const preselect = ref<number>(0)
 
-const { label, searchFunc } = defineProps<IAutocomplete>()
+const { label, searchFunc, multiChoose } = defineProps<IAutocomplete>()
 const emit = defineEmits(['choose', 'input'])
 
 const slots = useSlots()
@@ -81,20 +85,20 @@ function searchData() {
 	else {
 		callData(search.value, 2)
 			.then((data) => {
-				console.log('data = ', data)
 				dataList.length = 0
-				if ((data as []).length > 0) {
+				if (data && (data as []).length > 0) {
 					dataList.push(...data as [])
 				}
 			})
 	}
 }
 
-function clearPicked() {
-	picked.value = null
+function clearPicked(item: ISuggest) {
+	const index = picked.value.indexOf(item, 0)
+	picked.value.splice(index, 1)
 }
+
 function preselectSuggest(event: KeyboardEvent) {
-	console.log('event - ', event)
 	if (event.key === 'ArrowDown' && dataList.length > preselect.value ) {
 		preselect.value = preselect.value === null
 		? 0
@@ -105,11 +109,10 @@ function preselectSuggest(event: KeyboardEvent) {
 		? 0
 		: preselect.value - 1
 	}
-	console.log('preselect - ', preselect.value)
 }
 
 function choose(item: ISuggest) {
-	picked.value = item
+	picked.value.push(item)
 	search.value = ''
 	dataList.length = 0
 }
@@ -120,12 +123,21 @@ function choose(item: ISuggest) {
 	width: 100%
 	max-width: 600px
 	text-align: start
+	gap: 8px
+	&__wrapper
+		display: flex
+		flex-wrap: wrap
+		gap: 8px
+	
 	&__label
 		line-height: 18px
 		margin: 8px 4px
 		font-size: 14px
 	&__search
-		height: 42px
+		display: flex
+		flex-wrap: wrap
+		min-height: 42px
+		height: max-content
 		font-size: 16px
 		line-height: 18px
 		width: 100%
@@ -133,12 +145,14 @@ function choose(item: ISuggest) {
 		border: 1px solid #c9c9c9
 		padding: 4px 4px
 		background-color: #fff
+		gap: 8px
 	input
+		min-height: 32px
 		height: 100%
 		width: 100%
 		border: none
 		border-radius: 3px
-		padding: 4px 12px
+		padding: 4px 8px
 		font-size: 16px
 		&:focus-visible
 			outline: 0
@@ -148,8 +162,8 @@ function choose(item: ISuggest) {
 	display: flex
 	background-color: #8089cb
 	color: white
-	height: 100%
-	min-width: 100px
+	height: 32px
+	width: max-content
 	border-radius: 3px
 	text-align: center
 	padding: 4px 12px
@@ -165,7 +179,7 @@ function choose(item: ISuggest) {
 		justify-content: center
 		min-width: 24px
 		height: 100%
-		border-radius: 3px
+		border-radius: 50%
 		&:hover
 			background-color: black
 

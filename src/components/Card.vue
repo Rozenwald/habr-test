@@ -4,8 +4,16 @@
 		class="card"
 		:class="{ 'preselect': preselect }"
 	>
-		<div class="card__logo" alt="Аватар">
-			<!-- {{item.avatar}} -->
+		<img
+			v-if="item.avatar"
+			:src="item.avatar"
+			class="card__logo"
+			alt="Аватар">
+		</img>
+		<div
+			v-else
+			class="card__logo"
+			alt="Аватар">
 		</div>
 		<div class="card__info">
 			<div v-if="item.name">
@@ -64,8 +72,8 @@ watch(() => preselect, () => {
 	&__logo
 		display: flex
 		justify-content: center
-		min-width: 50px
-		height: 50px
+		width: 60px
+		height: 60px
 		border-radius: 25%
 		background-color: #111111
 	&__info
@@ -74,19 +82,8 @@ watch(() => preselect, () => {
 		justify-content: center
 		overflow-wrap: word-break
 		&__alias
+			font-size: 14px
+			word-break: break-all
 			color: #999
 
-	// z-index: 100
-	// margin: 8px 0
-	// overflow-y: auto
-	// position absolute
-	// width: 100%
-	// max-width: 256px
-	// max-height: 300px
-	// color: black
-	// border-radius: 5px
-	// background-color: #fff
-	// // -webkit-box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2)
-	// // -moz-box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2)
-	// // box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2)
 </style>

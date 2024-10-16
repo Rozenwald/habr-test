@@ -16,4 +16,5 @@ export interface IAutocomplete {
 	label?: string,
 	placeholder: string,
 	searchFunc?: Function,
+	multiChoose?: boolean,
 }
