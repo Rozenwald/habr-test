@@ -1,6 +1,10 @@
 <template>
-	<div class="card">
-		<div class="card__logo">
+	<div
+		ref="suggest" 
+		class="card"
+		:class="{ 'preselect': preselect }"
+	>
+		<div class="card__logo" alt="Аватар">
 			<!-- {{item.avatar}} -->
 		</div>
 		<div class="card__info">
@@ -18,61 +22,71 @@
 </template>
 
 <script setup lang="ts">
+import { useTemplateRef, watch } from 'vue'
 import { computed } from 'vue'
 import { ISuggest } from '~/types/models.ts'
 
-const { item } = defineProps<{
+// Переменные
+const suggestRef = useTemplateRef('suggest')
+
+const { item, preselect } = defineProps<{
 	item: ISuggest
+	preselect: boolean
 }>()
 
 const isCompany = computed(() => {
 	return item.type === 'company'
 })
+
+// Скролл до предвыбранного элемента
+watch(() => preselect, () => {
+	if (suggestRef.value && preselect) {
+		suggestRef.value.scrollIntoView()
+	}
+})
 </script>
 
-<style lang="stylus" scoped>
-.card {
-	height: 100px;
-	width: 100%;
-	text-align: start;
-	display: flex;
-	justify-content: start;
+<style lang="sass" scoped>
+.preselect
+	background-color: #c9c9c9
+
+.card
+	height: 100px
+	width: 100%
+	text-align: start
+	display: flex
+	justify-content: start
 	align-items: center
-	padding 20px 16px;
+	padding: 20px 16px
 	gap: 16px
-	&:hover {
+	&:hover
 		background-color: #c9c9c9
-	}
-	&__logo {
-		display: flex;
-		justify-content: center;
-		min-width: 50px;
-		height: 50px;
+	&__logo
+		display: flex
+		justify-content: center
+		min-width: 50px
+		height: 50px
 		border-radius: 25%
 		background-color: #111111
-
-	}
-	&__info {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		overflow-wrap: word-break;
-		&__alias {
+	&__info
+		display: flex
+		flex-direction: column
+		justify-content: center
+		overflow-wrap: word-break
+		&__alias
 			color: #999
-		}
-	}
-}
-	// z-index: 100;
-	// margin: 8px 0;
+
+	// z-index: 100
+	// margin: 8px 0
 	// overflow-y: auto
-	// position absolute;
+	// position absolute
 	// width: 100%
-	// max-width: 256px;
-	// max-height: 300px;
-	// color: black;
+	// max-width: 256px
+	// max-height: 300px
+	// color: black
 	// border-radius: 5px
-	// background-color: #fff;
-	// // -webkit-box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2);
-	// // -moz-box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2);
-	// // box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2);
+	// background-color: #fff
+	// // -webkit-box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2)
+	// // -moz-box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2)
+	// // box-shadow: 0px 0px 8px 0px rgba(70, 70, 70, 0.2)
 </style>
